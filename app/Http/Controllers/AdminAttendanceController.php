@@ -12,8 +12,13 @@ use App\Models\AttendanceCorrectionRequest;
 
 class AdminAttendanceController extends Controller
 {
-    // 管理者の日別勤怠一覧
-    public function index(Request $request)
+/**
+ * 管理者の日別勤怠一覧を表示する。
+ *
+ * @param Request $request
+ * @return \Illuminate\View\View
+ */
+    public function index(Request $request): \Illuminate\View\View
     {
         // 表示する日付を決める
         $date = $request->query('date')
@@ -40,14 +45,16 @@ class AdminAttendanceController extends Controller
             $totalWorkMinutes = null;
 
             if ($attendance) {
-                foreach ($attendance->breaks as $break) {
-                    if ($break->break_in && $break->break_out) {
-                        $totalBreakMinutes += Carbon::parse($break->break_in)
-                            ->diffInMinutes(Carbon::parse($break->break_out));
-                    }
-                }
+    $totalBreakMinutes = $attendance->breaks->sum(function ($break) {
+        if (!$break->break_in || !$break->break_out) {
+            return 0;
+        }
 
-                if ($attendance->clock_in && $attendance->clock_out) {
+        return Carbon::parse($break->break_in)
+            ->diffInMinutes(Carbon::parse($break->break_out));
+    });
+
+    if ($attendance->clock_in && $attendance->clock_out) {
                     $totalWorkMinutes = Carbon::parse($attendance->clock_in)
                         ->diffInMinutes(Carbon::parse($attendance->clock_out))
                         - $totalBreakMinutes;
@@ -90,8 +97,13 @@ class AdminAttendanceController extends Controller
         ));
     }
 
-    // 管理者の勤怠詳細
-    public function show($id)
+/**
+ * 管理者の勤怠詳細画面を表示する。
+ *
+ * @param int|string $id 勤怠ID
+ * @return \Illuminate\View\View
+ */
+public function show($id): \Illuminate\View\View
     {
         $attendance = Attendance::with(['user', 'breaks'])
             ->findOrFail($id);
@@ -128,8 +140,14 @@ class AdminAttendanceController extends Controller
         ));
     }
 
-    // 管理者による勤怠の直接修正
-    public function update(Request $request, $id)
+/**
+ * 管理者が勤怠情報を直接修正する。
+ *
+ * @param Request $request 入力された修正内容
+ * @param int|string $id 勤怠ID
+ * @return \Illuminate\Http\RedirectResponse
+ */
+public function update(Request $request, $id): \Illuminate\Http\RedirectResponse
     {
         $attendance = Attendance::findOrFail($id);
 
@@ -219,9 +237,13 @@ class AdminAttendanceController extends Controller
             ->with('message', '勤怠を修正しました');
     }
 
-    
-    // 管理者の修正申請一覧
-    public function applicationIndex()
+
+/**
+ * 管理者の勤怠修正申請一覧を表示する。
+ *
+ * @return \Illuminate\View\View
+ */
+public function applicationIndex(): \Illuminate\View\View
     {
         $applications = AttendanceCorrectionRequest::with([
             'attendance.user'
@@ -250,9 +272,14 @@ class AdminAttendanceController extends Controller
             'applications' => $formattedApplications,
         ]);
     }
-    
-    // 管理者の修正申請詳細
-    public function applicationShow($id)
+
+/**
+ * 管理者の勤怠修正申請の詳細画面を表示する。
+ *
+ * @param int|string $id 修正申請ID
+ * @return \Illuminate\View\View
+ */
+public function applicationShow($id): \Illuminate\View\View
     {
         // 申請・勤怠・スタッフ・休憩修正をまとめて取得
         $application = AttendanceCorrectionRequest::with([
@@ -267,9 +294,13 @@ class AdminAttendanceController extends Controller
             'user'
         ));
     }
-    
-    // 管理者による修正申請の承認
-    public function applicationApprove($id)
+/**
+ * 管理者が勤怠修正申請を承認する。
+ *
+ * @param int|string $id 修正申請ID
+ * @return \Illuminate\Http\RedirectResponse
+ */
+public function applicationApprove($id): \Illuminate\Http\RedirectResponse
     {
         DB::transaction(function () use ($id) {
 
@@ -312,8 +343,12 @@ class AdminAttendanceController extends Controller
 
         return redirect('/stamp_correction_request/list/admin');
     }
-    // 管理者のスタッフ一覧
-public function staffIndex()
+/**
+ * 管理者のスタッフ一覧を表示する。
+ *
+ * @return \Illuminate\View\View
+ */
+public function staffIndex(): \Illuminate\View\View
 {
     // 登録されているスタッフを取得
     $users = User::orderBy('id')->get();
@@ -323,9 +358,15 @@ public function staffIndex()
         'users' => $users,
     ]);
 }
-    
-    // 管理者：スタッフ別の月間勤怠一覧
-    public function staffAttendanceIndex(Request $request, $id)
+
+/**
+ * 管理者がスタッフ別の月間勤怠一覧を表示する。
+ *
+ * @param Request $request 表示する年月
+ * @param int|string $id スタッフID
+ * @return \Illuminate\View\View
+ */
+public function staffAttendanceIndex(Request $request, $id): \Illuminate\View\View
     {
         // スタッフIDから対象のユーザーを取得
         $user = User::findOrFail($id);
@@ -367,12 +408,14 @@ public function staffIndex()
             $breakMinutes = 0;
 
             if ($attendance) {
-                foreach ($attendance->breaks as $break) {
-                    if ($break->break_in && $break->break_out) {
-                        $breakMinutes += Carbon::parse($break->break_in)
-                            ->diffInMinutes(Carbon::parse($break->break_out));
-                    }
-                }
+                $breakMinutes = $attendance->breaks->sum(function ($break) {
+                    if (!$break->break_in || !$break->break_out) {
+                        return 0;
+        }
+
+                    return Carbon::parse($break->break_in)
+                        ->diffInMinutes(Carbon::parse($break->break_out));
+                });
             }
 
             // 勤務時間から休憩時間を引く
@@ -411,8 +454,13 @@ public function staffIndex()
         ));
     }
 
-    // 管理者：スタッフの月間勤怠をCSV出力
-    public function exportCsv(Request $request)
+/**
+ * 管理者がスタッフの月間勤怠をCSV形式で出力する。
+ *
+ * @param Request $request スタッフIDと対象年月
+ * @return \Symfony\Component\HttpFoundation\StreamedResponse
+ */
+public function exportCsv(Request $request): \Symfony\Component\HttpFoundation\StreamedResponse
     {
         // 対象スタッフと年月をチェック
         $validated = $request->validate([
@@ -450,17 +498,16 @@ public function staffIndex()
             ]);
 
             foreach ($attendances as $attendance) {
-                $breakMinutes = 0;
-
-                // 休憩時間を合計
-                foreach ($attendance->breaks as $break) {
-                    if ($break->break_in && $break->break_out) {
-                        $breakMinutes += Carbon::parse($break->break_in)
-                            ->diffInMinutes(Carbon::parse($break->break_out));
+                                $breakMinutes = $attendance->breaks->sum(function ($break) {
+                    if (!$break->break_in || !$break->break_out) {
+                        return 0;
                     }
-                }
 
-                $clockIn = $attendance->clock_in
+                    return Carbon::parse($break->break_in)
+                        ->diffInMinutes(Carbon::parse($break->break_out));
+                });
+
+            $clockIn = $attendance->clock_in
                     ? Carbon::parse($attendance->clock_in)
                     : null;
 

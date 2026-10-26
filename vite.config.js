@@ -17,6 +17,7 @@ export default defineConfig({
                 'resources/css/user/user-application-list.css',
                 'resources/css/admin/admin-login.css',
                 'resources/css/admin/admin-attendance-list.css',
+                'resources/css/reports/index.css',
                 'resources/css/admin/admin-detail.css',
                 'resources/css/admin/admin-application-list.css',
                 'resources/css/admin/admin-application-detail.css',
