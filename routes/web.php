@@ -44,11 +44,11 @@ Route::get('/', function () {
 // 勤怠打刻画面を表示する
 // ログインしている一般ユーザーのみアクセス可能
 Route::get('/attendance', [AttendanceController::class, 'index'])
-    ->middleware('auth');
+    ->middleware(['auth', 'verified']);
 
 // 出勤・休憩開始・休憩終了・退勤の打刻データを保存する
 Route::post('/attendance', [AttendanceController::class, 'store'])
-    ->middleware('auth');
+    ->middleware(['auth', 'verified']);
 
 
 // ================================
@@ -57,16 +57,16 @@ Route::post('/attendance', [AttendanceController::class, 'store'])
 
 // ログインユーザーの月間勤怠一覧を表示する
 Route::get('/attendance/list', [UserAttendanceController::class, 'index'])
-    ->middleware('auth');
+    ->middleware(['auth', 'verified']);
 
 // 指定された勤怠IDの詳細画面を表示する
 // {id}には対象の勤怠データのIDが入る
 Route::get('/attendance/{id}', [UserAttendanceController::class, 'show'])
-    ->middleware('auth');
+    ->middleware(['auth', 'verified']);
 
 // 勤怠詳細画面から送信された修正申請を保存する
 Route::post('/attendance/{id}', [UserAttendanceController::class, 'store'])
-    ->middleware('auth');
+    ->middleware(['auth', 'verified']);
 
 
 // ================================
@@ -76,11 +76,11 @@ Route::post('/attendance/{id}', [UserAttendanceController::class, 'store'])
 // 自分が提出した修正申請の一覧を表示する
 // 承認待ち・承認済みの申請を確認する
 Route::get('/stamp_correction_request/list', [UserAttendanceController::class, 'applicationIndex'])
-    ->middleware('auth');
+    ->middleware(['auth', 'verified']);
 
 // 指定された修正申請の詳細画面を表示する
 Route::get('/application/{id}', [UserAttendanceController::class, 'applicationShow'])
-    ->middleware('auth');
+    ->middleware(['auth', 'verified']);
 
 
 // ================================

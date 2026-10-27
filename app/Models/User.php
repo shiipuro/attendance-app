@@ -4,7 +4,7 @@ namespace App\Models;
 
 // メール認証機能を使用する場合に必要なインターフェース
 // 現在は使用していないためコメントアウトされている
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 // テスト用データなどを作成するFactory機能
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -18,7 +18,7 @@ use Illuminate\Notifications\Notifiable;
 // APIトークンを扱うための機能
 use Laravel\Sanctum\HasApiTokens;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     // APIトークン・Factory・通知機能を使用できるようにする
     use HasApiTokens, HasFactory, Notifiable;

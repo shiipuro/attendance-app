@@ -14,14 +14,14 @@ class AttendanceTest extends TestCase
     // ログインしていないユーザーは勤怠画面を開けない
     public function test_guest_cannot_access_attendance_page(): void
     {
-        // 未ログインの状態で勤怠画面にアクセス
-        $response = $this->get('/attendance');
+    // 未ログインの状態で勤怠画面にアクセス
+     $response = $this->get('/attendance');
 
-        // ログイン画面へリダイレクトされることを確認
-        $response->assertRedirect('/login');
+    // ログイン画面へリダイレクトされることを確認
+    $response->assertRedirect('/login');
     }
     // ログインしていない人は管理者の勤怠一覧画面を開けない
-public function test_guest_cannot_access_admin_attendance_page(): void
+    public function test_guest_cannot_access_admin_attendance_page(): void
 {
     // 未ログインの状態で管理者の勤怠一覧画面にアクセス
     $response = $this->get('/admin/attendance/list');
@@ -30,10 +30,12 @@ public function test_guest_cannot_access_admin_attendance_page(): void
     $response->assertRedirect('/admin/login');
 }
 // ログイン済みユーザーは勤怠画面を開ける
-public function test_authenticated_user_can_access_attendance_page(): void
+    public function test_authenticated_user_can_access_attendance_page(): void
 {
     // Factoryを使ってテスト用ユーザーを作成
-    $user = User::factory()->create();
+    $user = User::factory()->create([
+    'email_verified_at' => now(),
+]);
 
     // 作成したユーザーとしてログインする
     $this->actingAs($user);
@@ -44,8 +46,8 @@ public function test_authenticated_user_can_access_attendance_page(): void
     // 画面が正常に表示されることを確認する
     $response->assertStatus(200);
 }
-// テストで使用するデータベース名を確認する
-public function test_database_connection_is_testing(): void
+    // テストで使用するデータベース名を確認する
+    public function test_database_connection_is_testing(): void
 {
     // 実際に接続しているデータベース名を取得する
     $databaseName = \Illuminate\Support\Facades\DB::selectOne(
@@ -55,11 +57,13 @@ public function test_database_connection_is_testing(): void
     // testingデータベースに接続していることを確認する
     $this->assertSame('testing', $databaseName);
 }
-// ログイン済みユーザーが出勤打刻できることを確認する
-public function test_authenticated_user_can_clock_in(): void
+    // ログイン済みユーザーが出勤打刻できることを確認する
+    public function test_authenticated_user_can_clock_in(): void
 {
     // テスト用ユーザーを作成する
-    $user = User::factory()->create();
+    $user = User::factory()->create([
+    'email_verified_at' => now(),
+]);
 
     // 作成したユーザーとしてログインする
     $this->actingAs($user);
@@ -78,8 +82,8 @@ public function test_authenticated_user_can_clock_in(): void
         'date' => now()->toDateString(),
     ]);
 }
-// 出勤中のユーザーが休憩を開始できることを確認する
-public function test_authenticated_user_can_start_break(): void
+    // 出勤中のユーザーが休憩を開始できることを確認する
+    public function test_authenticated_user_can_start_break(): void
 {
     // テスト用ユーザーを作成する
     $user = User::factory()->create();
@@ -110,8 +114,8 @@ public function test_authenticated_user_can_start_break(): void
         'attendance_id' => $attendance->id,
     ]);
 }
-// 休憩中のユーザーが休憩を終了できることを確認する
-public function test_authenticated_user_can_end_break(): void
+    // 休憩中のユーザーが休憩を終了できることを確認する
+    public function test_authenticated_user_can_end_break(): void
 {
     // テスト用ユーザーを作成する
     $user = User::factory()->create();
@@ -148,8 +152,8 @@ public function test_authenticated_user_can_end_break(): void
         'break_out' => now()->format('H:i:s'),
     ]);
 }
-// ログイン済みユーザーが退勤打刻できることを確認する
-public function test_authenticated_user_can_clock_out(): void
+    // ログイン済みユーザーが退勤打刻できることを確認する
+    public function test_authenticated_user_can_clock_out(): void
 {
     // テスト用ユーザーを作成する
     $user = User::factory()->create();
@@ -177,8 +181,8 @@ public function test_authenticated_user_can_clock_out(): void
         'clock_out' => now()->format('H:i:s'),
     ]);
 }
-// ログイン済みユーザーが勤怠一覧を表示できることを確認する
-public function test_authenticated_user_can_access_attendance_list(): void
+    // ログイン済みユーザーが勤怠一覧を表示できることを確認する
+    public function test_authenticated_user_can_access_attendance_list(): void
 {
     // テスト用ユーザーを作成する
     $user = User::factory()->create();
@@ -192,8 +196,8 @@ public function test_authenticated_user_can_access_attendance_list(): void
     // 画面が正常に表示されることを確認する
     $response->assertStatus(200);
 }
-// 勤怠一覧で勤務時間が正しく計算されることを確認する
-public function test_attendance_list_calculates_working_hours(): void
+    // 勤怠一覧で勤務時間が正しく計算されることを確認する
+    public function test_attendance_list_calculates_working_hours(): void
 {
     // テスト用ユーザーを作成してログインする
     $user = User::factory()->create();
@@ -231,8 +235,8 @@ public function test_attendance_list_calculates_working_hours(): void
     $this->assertNotNull($todayRecord);
     $this->assertSame('08:00', $todayRecord['total_time']);
 }
-// 他のユーザーの勤怠データが一覧に含まれないことを確認する
-public function test_attendance_list_does_not_include_other_users_records(): void
+    // 他のユーザーの勤怠データが一覧に含まれないことを確認する
+    public function test_attendance_list_does_not_include_other_users_records(): void
 {
     // 2人のテスト用ユーザーを作成する
     $user = User::factory()->create();
@@ -263,8 +267,8 @@ public function test_attendance_list_does_not_include_other_users_records(): voi
         collect($records)->contains('id', $otherAttendance->id)
     );
 }
-// ログイン済みユーザーが自分の勤怠詳細を表示できることを確認する
-public function test_authenticated_user_can_access_own_attendance_detail(): void
+    // ログイン済みユーザーが自分の勤怠詳細を表示できることを確認する
+    public function test_authenticated_user_can_access_own_attendance_detail(): void
 {
     // テスト用ユーザーを作成する
     $user = User::factory()->create();
@@ -286,8 +290,8 @@ public function test_authenticated_user_can_access_own_attendance_detail(): void
     // 正常に画面が表示されることを確認する
     $response->assertStatus(200);
 }
-// 他のユーザーの勤怠詳細にアクセスできないことを確認する
-public function test_user_cannot_access_other_users_attendance_detail(): void
+    // 他のユーザーの勤怠詳細にアクセスできないことを確認する
+    public function test_user_cannot_access_other_users_attendance_detail(): void
 {
     // 2人のテスト用ユーザーを作成する
     $user = User::factory()->create();
@@ -310,8 +314,8 @@ public function test_user_cannot_access_other_users_attendance_detail(): void
     // 404エラーになることを確認する
     $response->assertStatus(404);
 }
-// 一般ユーザーが勤怠修正申請を送信できることを確認する
-public function test_user_can_submit_attendance_correction_request(): void
+    // 一般ユーザーが勤怠修正申請を送信できることを確認する
+    public function test_user_can_submit_attendance_correction_request(): void
 {
     // テスト用ユーザーを作成してログインする
     $user = User::factory()->create();
@@ -342,8 +346,8 @@ public function test_user_can_submit_attendance_correction_request(): void
         'approval_status' => 0,
     ]);
 }
-// 承認待ちの修正申請がある場合、重複申請できないことを確認する
-public function test_user_cannot_submit_duplicate_pending_correction_request(): void
+    // 承認待ちの修正申請がある場合、重複申請できないことを確認する
+    public function test_user_cannot_submit_duplicate_pending_correction_request(): void
 {
     // テスト用ユーザーを作成してログインする
     $user = User::factory()->create();
@@ -377,8 +381,8 @@ public function test_user_cannot_submit_duplicate_pending_correction_request(): 
     // 修正申請が1件だけ保存されていることを確認する
     $this->assertDatabaseCount('attendance_correction_requests', 1);
 }
-// ログインユーザーが自分の勤怠修正申請一覧を表示できることを確認する
-public function test_authenticated_user_can_access_correction_request_list(): void
+    // ログインユーザーが自分の勤怠修正申請一覧を表示できることを確認する
+    public function test_authenticated_user_can_access_correction_request_list(): void
 {
     // テスト用ユーザーを作成する
     $user = User::factory()->create();
@@ -392,8 +396,8 @@ public function test_authenticated_user_can_access_correction_request_list(): vo
     // 正常に表示されることを確認する
     $response->assertStatus(200);
 }
-// 修正申請一覧に他のユーザーの申請が含まれないことを確認する
-public function test_correction_request_list_does_not_include_other_users_requests(): void
+    // 修正申請一覧に他のユーザーの申請が含まれないことを確認する
+    public function test_correction_request_list_does_not_include_other_users_requests(): void
 {
     // 2人のユーザーを作成する
     $user = User::factory()->create();
@@ -446,8 +450,8 @@ public function test_correction_request_list_does_not_include_other_users_reques
             && $applications->first()['comment'] === '自分の修正申請';
     });
 }
-// 管理者が勤怠一覧画面を表示できることを確認する
-public function test_authenticated_admin_can_access_attendance_list(): void
+    // 管理者が勤怠一覧画面を表示できることを確認する
+    public function test_authenticated_admin_can_access_attendance_list(): void
 {
     // テスト用の管理者を作成する
     $admin = \App\Models\Admin::create([
@@ -465,7 +469,7 @@ public function test_authenticated_admin_can_access_attendance_list(): void
     $response->assertStatus(200);
 }
 // 管理者が一般ユーザーの勤怠詳細を表示できることを確認する
-public function test_authenticated_admin_can_access_attendance_detail(): void
+    public function test_authenticated_admin_can_access_attendance_detail(): void
 {
     // テスト用の管理者を作成する
     $admin = \App\Models\Admin::create([
@@ -493,8 +497,8 @@ public function test_authenticated_admin_can_access_attendance_detail(): void
     // 正常に表示されることを確認する
     $response->assertStatus(200);
 }
-// 管理者が一般ユーザーの勤怠を直接修正できることを確認する
-public function test_admin_can_update_attendance(): void
+    // 管理者が一般ユーザーの勤怠を直接修正できることを確認する
+    public function test_admin_can_update_attendance(): void
 {
     // テスト用の管理者を作成する
     $admin = \App\Models\Admin::create([
@@ -533,8 +537,8 @@ public function test_admin_can_update_attendance(): void
         'clock_out' => '18:30:00',
     ]);
 }
-// 管理者が勤怠修正申請一覧を表示できることを確認する
-public function test_admin_can_access_correction_request_list(): void
+    // 管理者が勤怠修正申請一覧を表示できることを確認する
+    public function test_admin_can_access_correction_request_list(): void
 {
     // テスト用の管理者を作成する
     $admin = \App\Models\Admin::create([
@@ -551,8 +555,8 @@ public function test_admin_can_access_correction_request_list(): void
     // 正常に表示されることを確認する
     $response->assertStatus(200);
 }
-// 管理者が勤怠修正申請の詳細を表示できることを確認する
-public function test_admin_can_access_correction_request_detail(): void
+    // 管理者が勤怠修正申請の詳細を表示できることを確認する
+    public function test_admin_can_access_correction_request_detail(): void
 {
     // テスト用の管理者を作成する
     $admin = \App\Models\Admin::create([
@@ -597,8 +601,8 @@ public function test_admin_can_access_correction_request_detail(): void
     // 正常に表示されることを確認する
     $response->assertStatus(200);
 }
-// 管理者が修正申請を承認できることを確認する
-public function test_admin_can_approve_correction_request(): void
+    // 管理者が修正申請を承認できることを確認する
+    public function test_admin_can_approve_correction_request(): void
 {
     // テスト用の管理者を作成する
     $admin = \App\Models\Admin::create([
@@ -656,8 +660,8 @@ public function test_admin_can_approve_correction_request(): void
         'approval_status' => 1,
     ]);
 }
-// 承認済みの修正申請を再承認しても再処理されないことを確認する
-public function test_admin_cannot_approve_already_approved_request_again(): void
+    // 承認済みの修正申請を再承認しても再処理されないことを確認する
+    public function test_admin_cannot_approve_already_approved_request_again(): void
 {
     // 管理者と一般ユーザーを作成する
     $admin = \App\Models\Admin::create([
@@ -714,8 +718,8 @@ public function test_admin_cannot_approve_already_approved_request_again(): void
         'approval_status' => 1,
     ]);
 }
-// 管理者がスタッフ一覧画面を表示できることを確認する
-public function test_admin_can_access_staff_list(): void
+    // 管理者がスタッフ一覧画面を表示できることを確認する
+    public function test_admin_can_access_staff_list(): void
 {
     // テスト用の管理者を作成する
     $admin = \App\Models\Admin::create([
@@ -740,8 +744,8 @@ public function test_admin_can_access_staff_list(): void
         return $users->contains('id', $user->id);
     });
 }
-// 管理者がスタッフ別の月間勤怠一覧を表示できることを確認する
-public function test_admin_can_access_staff_attendance_list(): void
+    // 管理者がスタッフ別の月間勤怠一覧を表示できることを確認する
+    public function test_admin_can_access_staff_attendance_list(): void
 {
     // テスト用の管理者を作成する
     $admin = \App\Models\Admin::create([
@@ -784,8 +788,8 @@ public function test_admin_can_access_staff_attendance_list(): void
         });
     });
 }
-// スタッフ別勤怠一覧に他のスタッフの勤怠が含まれないことを確認する
-public function test_admin_staff_attendance_list_excludes_other_users_records(): void
+    // スタッフ別勤怠一覧に他のスタッフの勤怠が含まれないことを確認する
+    public function test_admin_staff_attendance_list_excludes_other_users_records(): void
 {
     // 管理者を作成する
     $admin = \App\Models\Admin::create([
@@ -834,8 +838,8 @@ public function test_admin_staff_attendance_list_excludes_other_users_records():
             && $todayRecord['clock_out'] === '18:00';
     });
 }
-// 管理者がスタッフの勤怠CSVを出力できることを確認する
-public function test_admin_can_export_attendance_csv(): void
+    // 管理者がスタッフの勤怠CSVを出力できることを確認する
+    public function test_admin_can_export_attendance_csv(): void
 {
     // 管理者を作成
     $admin = \App\Models\Admin::create([
@@ -877,8 +881,8 @@ public function test_admin_can_export_attendance_csv(): void
         'attendance_' . $user->id . '_2026-10.csv'
     );
 }
-// CSVに正しい勤怠データが出力されることを確認する
-public function test_admin_export_csv_contains_attendance_data(): void
+    // CSVに正しい勤怠データが出力されることを確認する
+    public function test_admin_export_csv_contains_attendance_data(): void
 {
     // 管理者を作成
     $admin = \App\Models\Admin::create([
@@ -923,8 +927,8 @@ public function test_admin_export_csv_contains_attendance_data(): void
         $csv
     );
 }
-// CSV出力時に休憩時間が正しく計算されることを確認する
-public function test_admin_export_csv_calculates_break_time(): void
+    // CSV出力時に休憩時間が正しく計算されることを確認する
+    public function test_admin_export_csv_calculates_break_time(): void
 {
     // 管理者を作成
     $admin = \App\Models\Admin::create([
@@ -970,8 +974,8 @@ public function test_admin_export_csv_calculates_break_time(): void
         $csv
     );
 }
-// CSVに他のスタッフの勤怠が含まれないことを確認する
-public function test_admin_export_csv_excludes_other_users(): void
+    // CSVに他のスタッフの勤怠が含まれないことを確認する
+    public function test_admin_export_csv_excludes_other_users(): void
 {
     // 管理者を作成
     $admin = \App\Models\Admin::create([
@@ -1025,8 +1029,8 @@ public function test_admin_export_csv_excludes_other_users(): void
         $csv
     );
 }
-// CSVに指定月以外の勤怠が含まれないことを確認する
-public function test_admin_export_csv_excludes_other_months(): void
+    // CSVに指定月以外の勤怠が含まれないことを確認する
+    public function test_admin_export_csv_excludes_other_months(): void
 {
     // 管理者を作成
     $admin = \App\Models\Admin::create([
@@ -1079,8 +1083,8 @@ public function test_admin_export_csv_excludes_other_months(): void
         $csv
     );
 }
-// CSV出力時にスタッフIDが必須であることを確認する
-public function test_admin_export_csv_requires_user_id(): void
+    // CSV出力時にスタッフIDが必須であることを確認する
+    public function test_admin_export_csv_requires_user_id(): void
 {
     // 管理者を作成
     $admin = \App\Models\Admin::create([
@@ -1099,8 +1103,8 @@ public function test_admin_export_csv_requires_user_id(): void
     // user_idにバリデーションエラーが出ることを確認
     $response->assertSessionHasErrors('user_id');
 }
-// 存在しないスタッフIDではCSV出力できないことを確認する
-public function test_admin_export_csv_rejects_invalid_user_id(): void
+    // 存在しないスタッフIDではCSV出力できないことを確認する
+    public function test_admin_export_csv_rejects_invalid_user_id(): void
 {
     // 管理者を作成
     $admin = \App\Models\Admin::create([
@@ -1120,8 +1124,8 @@ public function test_admin_export_csv_rejects_invalid_user_id(): void
     // user_idにバリデーションエラーが出ることを確認
     $response->assertSessionHasErrors('user_id');
 }
-// CSV出力時に年月が必須であることを確認する
-public function test_admin_export_csv_requires_year_month(): void
+    // CSV出力時に年月が必須であることを確認する
+    public function test_admin_export_csv_requires_year_month(): void
 {
     // 管理者を作成
     $admin = \App\Models\Admin::create([
@@ -1143,8 +1147,8 @@ public function test_admin_export_csv_requires_year_month(): void
     // year_monthにバリデーションエラーが出ることを確認
     $response->assertSessionHasErrors('year_month');
 }
-// CSV出力時に年月の形式が正しいことを確認する
-public function test_admin_export_csv_rejects_invalid_year_month(): void
+    // CSV出力時に年月の形式が正しいことを確認する
+    public function test_admin_export_csv_rejects_invalid_year_month(): void
 {
     // 管理者を作成
     $admin = \App\Models\Admin::create([
@@ -1167,8 +1171,8 @@ public function test_admin_export_csv_rejects_invalid_year_month(): void
     // year_monthにバリデーションエラーが出ることを確認
     $response->assertSessionHasErrors('year_month');
 }
-// 退勤時刻が出勤時刻より前の場合、管理者が修正できないことを確認する
-public function test_admin_cannot_update_attendance_with_invalid_clock_out(): void
+    // 退勤時刻が出勤時刻より前の場合、管理者が修正できないことを確認する
+    public function test_admin_cannot_update_attendance_with_invalid_clock_out(): void
 {
     // 管理者を作成
     $admin = \App\Models\Admin::create([
@@ -1210,8 +1214,8 @@ public function test_admin_cannot_update_attendance_with_invalid_clock_out(): vo
         'clock_out' => '18:00:00',
     ]);
 }
-// 休憩終了が開始より前の場合、管理者が修正できないことを確認する
-public function test_admin_cannot_update_attendance_with_invalid_break_time(): void
+    // 休憩終了が開始より前の場合、管理者が修正できないことを確認する
+    public function test_admin_cannot_update_attendance_with_invalid_break_time(): void
 {
     // 管理者を作成
     $admin = \App\Models\Admin::create([
