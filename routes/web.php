@@ -15,6 +15,9 @@ use App\Http\Controllers\AdminAttendanceController;
 // 一般ユーザーの勤怠一覧・詳細・修正申請を担当するController
 use App\Http\Controllers\UserAttendanceController;
 
+// 勤怠レポート画面を表示するController
+use App\Http\Controllers\ReportController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -67,6 +70,11 @@ Route::get('/attendance/{id}', [UserAttendanceController::class, 'show'])
 // 勤怠詳細画面から送信された修正申請を保存する
 Route::post('/attendance/{id}', [UserAttendanceController::class, 'store'])
     ->middleware(['auth', 'verified']);
+
+// ログイン・メール認証済みの一般ユーザーに勤怠レポートを表示する
+Route::get('/reports', [ReportController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('reports.index');
 
 
 // ================================
