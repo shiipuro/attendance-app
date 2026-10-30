@@ -19,11 +19,12 @@ class Attendance extends Model
 
     // create()やupdate()で一括代入できるカラムを指定する
     protected $fillable = [
-        'user_id',   // 勤怠を登録したユーザーのID
-        'date',      // 勤怠の日付
-        'clock_in',  // 出勤時刻
-        'clock_out', // 退勤時刻
-    ];
+    'user_id',   // 勤怠を登録したユーザーのID
+    'date',      // 勤怠の日付
+    'clock_in',  // 出勤時刻
+    'clock_out', // 退勤時刻
+    'comment',   // 勤怠の備考
+];
 
     // =========================================
     // ② Userモデルとのリレーション
