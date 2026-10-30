@@ -89,7 +89,7 @@
                     <a class="inner__group--item" href="/stamp_correction_request/list">申請</a>
 
                     {{-- 勤怠レポート画面へのリンク --}}
-                    <a class="inner__group--item" href="/attendance/report">レポート</a>
+                    <a class="inner__group--item" href="/reports">レポート</a>
 
                     {{-- ボタンを押すとログアウト用フォームをPOST送信する --}}
                     <button class="inner__group--item logout-button">
