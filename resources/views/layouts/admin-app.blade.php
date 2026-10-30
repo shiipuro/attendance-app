@@ -86,7 +86,7 @@
                     <a class="inner__group--item" href="/admin/staff/list">スタッフ一覧</a>
 
                     {{-- 修正申請一覧画面へ移動する --}}
-                    <a class="inner__group--item" href="/stamp_correction_request/list">申請一覧</a>
+                    <a class="inner__group--item" href="/stamp_correction_request/list/admin">申請一覧</a>
 
                     {{-- ボタンを押すとログアウト用フォームをPOST送信する --}}
                     <button class="inner__group--item logout-button">
