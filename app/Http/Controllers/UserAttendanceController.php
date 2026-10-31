@@ -159,8 +159,8 @@ class UserAttendanceController extends Controller
     // =========================================
     // ② 一般ユーザーの勤怠詳細
     // =========================================
-    public function show($id)
-    {
+    public function show(Request $request, $id)
+{
         // ログイン中のユーザーを取得する
         $user = Auth::user();
 
@@ -173,6 +173,20 @@ class UserAttendanceController extends Controller
 
         // 勤怠の日付をCarbonで扱える形式にする
         $attendanceDate = Carbon::parse($attendance->date);
+
+        // 申請一覧の「詳細」から来た場合、クリックした申請IDを取得する
+        // 通常の勤怠詳細画面から来た場合はnullになる
+        $applicationId = $request->query('application_id');
+
+        // 申請一覧から来た場合、クリックした修正申請を取得する
+        // 自分の勤怠に紐づく申請だけを取得し、他人の申請は表示しない
+        $selectedApplication = null;
+
+        if ($applicationId !== null) {
+        $selectedApplication = AttendanceCorrectionRequest::with('correctionBreaks')
+        ->where('attendance_id', $attendance->id)
+        ->findOrFail($applicationId);
+}
 
         // この勤怠に承認待ちの修正申請があるか確認する
         // approval_status = 0 は承認待ち
@@ -202,15 +216,19 @@ class UserAttendanceController extends Controller
         // 申請理由は初期状態では空欄
         $comment = '';
 
-        // 承認待ちの申請がある場合は、申請内容を優先表示する
-        if ($pendingApplication) {
+        // 申請一覧から来た場合は、クリックした申請を優先する
+        // 通常の勤怠詳細では、承認待ちの申請を表示する
+        $displayApplication = $selectedApplication ?? $pendingApplication;
 
-            // 修正申請で入力された出勤・退勤時刻に切り替える
-            $clockIn = $pendingApplication->new_clock_in;
-            $clockOut = $pendingApplication->new_clock_out;
+        // 表示対象の申請がある場合は、その内容を表示する
+        if ($displayApplication) {
 
-            // 申請された休憩時間に切り替える
-            $breaks = $pendingApplication->correctionBreaks
+        // 修正申請で入力された出勤・退勤時刻に切り替える
+        $clockIn = $displayApplication->new_clock_in;
+        $clockOut = $displayApplication->new_clock_out;
+
+        // 申請された休憩時間に切り替える
+        $breaks = $displayApplication->correctionBreaks
                 ->map(function ($break) {
                     return [
                         'break_in' => Carbon::parse($break->new_break_in)->format('H:i'),
@@ -219,7 +237,7 @@ class UserAttendanceController extends Controller
                 })->toArray();
 
             // 修正申請の理由を表示する
-            $comment = $pendingApplication->comment;
+        $comment = $displayApplication->comment;
         }
 
         // Bladeに渡す勤怠詳細データをまとめる
@@ -241,7 +259,7 @@ class UserAttendanceController extends Controller
             // 休憩時間・申請理由・承認待ち申請を渡す
             'breaks' => $breaks,
             'comment' => $comment,
-            'application' => $pendingApplication,
+            'application' => $displayApplication,
         ];
 
         // 勤怠詳細画面を表示する
@@ -458,8 +476,7 @@ class UserAttendanceController extends Controller
             }
         )->findOrFail($id);
 
-        // 申請に紐づく元の勤怠IDを使い、
-        // 仕様書PG05の勤怠詳細画面へ移動する
-        return redirect('/attendance/detail/' . $application->attendance_id);
+        // どの修正申請の「詳細」を押したか分かるように申請IDも渡す
+        return redirect('/attendance/detail/' . $application->attendance_id . '?application_id=' . $application->id);
     }
 }

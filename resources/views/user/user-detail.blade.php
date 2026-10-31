@@ -259,7 +259,11 @@
 
                 {{-- 承認待ちの場合は修正ボタンを表示しない --}}
                 <div class="form__button">
-                    <p class="readonly-message">承認待ちのため修正はできません。</p>
+                    @if ($data['application']->approval_status == 0)
+                <p class="readonly-message">承認待ちのため修正はできません。</p>
+                @else
+                <p class="readonly-message">承認済みの申請内容です。</p>
+                @endif
                 </div>
 
             @endif
