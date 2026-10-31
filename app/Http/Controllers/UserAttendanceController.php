@@ -5,6 +5,9 @@ namespace App\Http\Controllers;
 // フォームやURLから送られたデータを受け取る
 use Illuminate\Http\Request;
 
+// 勤怠修正申請の入力チェックを行うFormRequest
+use App\Http\Requests\AttendanceCorrectionFormRequest;
+
 // ログイン中のユーザー情報を取得する
 use Illuminate\Support\Facades\Auth;
 
@@ -249,7 +252,7 @@ class UserAttendanceController extends Controller
     // =========================================
     // ③ 一般ユーザーの勤怠修正申請を保存する
     // =========================================
-    public function store(Request $request, $id)
+    public function store(AttendanceCorrectionFormRequest $request, $id)
     {
         // 指定された勤怠がログインユーザー本人のものか確認する
         $attendance = Attendance::where('user_id', Auth::id())
@@ -278,19 +281,8 @@ class UserAttendanceController extends Controller
         // nullable：未入力でもよい
         // array：配列形式
         // *：配列内の各項目をチェックする
-        $validated = $request->validate([
-            'new_clock_in' => ['required', 'date_format:H:i'],
-            'new_clock_out' => [
-                'required',
-                'date_format:H:i',
-                'after:new_clock_in'
-            ],
-            'comment' => ['required', 'string', 'max:1000'],
-            'new_break_in' => ['nullable', 'array'],
-            'new_break_out' => ['nullable', 'array'],
-            'new_break_in.*' => ['nullable', 'date_format:H:i'],
-            'new_break_out.*' => ['nullable', 'date_format:H:i'],
-        ]);
+        // FormRequestでチェック済みの入力データを取得する
+        $validated = $request->validated();
 
         // 入力された休憩データをまとめる配列
         $breaks = [];
@@ -327,18 +319,26 @@ class UserAttendanceController extends Controller
             if ($breakIn >= $breakOut) {
                 return back()->withErrors([
                     "new_break_out.$index" =>
-                        '休憩終了は開始より後にしてください。',
+                        '休憩時間もしくは退勤時間が不適切な値です',
                 ])->withInput();
             }
 
-            // 休憩が出勤から退勤までの時間内か確認する
+            // 休憩開始が出勤前、または退勤後の場合
             if (
                 $breakIn < $validated['new_clock_in'] ||
-                $breakOut > $validated['new_clock_out']
+                $breakIn > $validated['new_clock_out']
             ) {
                 return back()->withErrors([
+                    "new_break_in.$index" =>
+                        '休憩時間が不適切な値です',
+                ])->withInput();
+            }
+
+            // 休憩終了が退勤後の場合
+            if ($breakOut > $validated['new_clock_out']) {
+                return back()->withErrors([
                     "new_break_out.$index" =>
-                        '休憩時間は出勤から退勤までの間にしてください。',
+                        '休憩時間もしくは退勤時間が不適切な値です',
                 ])->withInput();
             }
 
