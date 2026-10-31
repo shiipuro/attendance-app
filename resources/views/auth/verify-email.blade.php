@@ -14,9 +14,12 @@
 <body>
     <header class="header">
         <div class="header__inner">
-            <a class="header__logo" href="/">
-                <img class="header__logo--img" src="{{ asset('images/logo.svg') }}" alt="logo">
-            </a>
+            {{-- メール認証画面のロゴを白文字で表示 --}}
+<a class="header__logo" href="/">
+    <span style="color: #fff; font-size: 30px; font-weight: bold; letter-spacing: 2px;">
+        COACHTECH
+    </span>
+</a>
         </div>
     </header>
     <main>

@@ -12,7 +12,7 @@ class ReportTest extends TestCase
 public function test_guest_cannot_access_reports(): void
 {
 // ログインせずにレポート画面へアクセスする
-$response = $this->get('/reports');
+$response = $this->get('/attendance/report');
 
 // ログイン画面へリダイレクトされることを確認する
 $response->assertRedirect('/login');
@@ -25,7 +25,7 @@ public function test_verified_user_can_access_reports(): void
     $user = \App\Models\User::factory()->create();
 
     // 作成したユーザーでログインする
-    $response = $this->actingAs($user)->get('/reports');
+    $response = $this->actingAs($user)->get('/attendance/report');
 
     // レポート画面が正常に表示されることを確認する
     $response->assertStatus(200);
@@ -40,7 +40,7 @@ public function test_reports_show_zero_when_no_attendance_exists(): void
     $user = \App\Models\User::factory()->create();
 
     // 作成したユーザーでログインし、レポート画面を開く
-    $response = $this->actingAs($user)->get('/reports');
+    $response = $this->actingAs($user)->get('/attendance/report');
 
     // レポート画面が正常に表示されることを確認する
     $response->assertStatus(200);
@@ -70,7 +70,7 @@ public function test_reports_calculate_work_hours_correctly(): void
     ]);
 
     // 作成したユーザーでログインし、レポート画面を開く
-    $response = $this->actingAs($user)->get('/reports');
+    $response = $this->actingAs($user)->get('/attendance/report');
 
     // レポート画面が正常に表示されることを確認する
     $response->assertStatus(200);
@@ -100,7 +100,7 @@ public function test_reports_calculate_overtime_correctly(): void
     ]);
 
     // 作成したユーザーでログインし、レポート画面を開く
-    $response = $this->actingAs($user)->get('/reports');
+    $response = $this->actingAs($user)->get('/attendance/report');
 
     // レポート画面が正常に表示されることを確認する
     $response->assertStatus(200);
@@ -123,7 +123,7 @@ public function test_reports_show_monthly_work_hours_correctly(): void
     ]);
 
     // 作成したユーザーでログインし、レポート画面を開く
-    $response = $this->actingAs($user)->get('/reports');
+    $response = $this->actingAs($user)->get('/attendance/report');
 
     // レポート画面が正常に表示されることを確認する
     $response->assertStatus(200);
@@ -149,7 +149,7 @@ public function test_reports_count_late_arrivals_correctly(): void
     ]);
 
     // 作成したユーザーでログインし、レポート画面を開く
-    $response = $this->actingAs($user)->get('/reports');
+    $response = $this->actingAs($user)->get('/attendance/report');
 
     // レポート画面が正常に表示されることを確認する
     $response->assertStatus(200);
@@ -174,7 +174,7 @@ public function test_reports_count_early_leaves_correctly(): void
     ]);
 
     // 作成したユーザーでログインし、レポート画面を開く
-    $response = $this->actingAs($user)->get('/reports');
+    $response = $this->actingAs($user)->get('/attendance/report');
 
     // レポート画面が正常に表示されることを確認する
     $response->assertStatus(200);
@@ -206,7 +206,7 @@ public function test_reports_count_long_work_hours_correctly(): void
     ]);
 
     // 作成したユーザーでログインし、レポート画面を開く
-    $response = $this->actingAs($user)->get('/reports');
+    $response = $this->actingAs($user)->get('/attendance/report');
 
     // レポート画面が正常に表示されることを確認する
     $response->assertStatus(200);

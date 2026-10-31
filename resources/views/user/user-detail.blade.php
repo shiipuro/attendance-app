@@ -25,7 +25,7 @@
 
         {{-- 勤怠IDをURLに含めてPOST送信する --}}
         {{-- UserAttendanceControllerのstore()で修正申請を処理する --}}
-        <form class="form" action="{{ url('/attendance/' . $data['id']) }}" method="post">
+        <form class="form" action="{{ url('/attendance/detail/' . $data['id']) }}" method="post">
 
             {{-- CSRF対策のトークンを設定する --}}
             @csrf

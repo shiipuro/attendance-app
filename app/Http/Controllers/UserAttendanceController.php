@@ -266,9 +266,10 @@ class UserAttendanceController extends Controller
 
         // 承認待ちがある場合は新しい申請を受け付けない
         if ($hasPendingRequest) {
-            return redirect('/attendance/' . $id)
-                ->with('message', '承認待ちのため修正できません');
-        }
+        // 仕様書PG05の勤怠詳細画面へ戻す
+            return redirect('/attendance/detail/' . $id)
+        ->with('message', '承認待ちのため修正できません');
+}
 
         // フォームから送られた入力内容をチェックする
         // required：必須入力
@@ -382,8 +383,8 @@ class UserAttendanceController extends Controller
             }
         });
 
-        // 保存後は勤怠詳細画面へ戻り、完了メッセージを表示する
-        return redirect('/attendance/' . $id)
+        // 修正申請の保存後は、仕様書PG05の勤怠詳細画面へ戻る
+        return redirect('/attendance/detail/' . $id)
             ->with('message', '修正申請を送信しました');
     }
 
@@ -458,7 +459,7 @@ class UserAttendanceController extends Controller
         )->findOrFail($id);
 
         // 申請に紐づく元の勤怠IDを使い、
-        // 勤怠詳細画面へリダイレクトする
-        return redirect('/attendance/' . $application->attendance_id);
+        // 仕様書PG05の勤怠詳細画面へ移動する
+        return redirect('/attendance/detail/' . $application->attendance_id);
     }
 }

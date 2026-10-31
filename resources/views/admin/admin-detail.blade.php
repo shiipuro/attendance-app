@@ -74,14 +74,16 @@
                         <div class="form__input-group">
 
                             {{-- 出勤時刻をnew_clock_inとして送信する --}}
+                            {{-- エラー後は入力した時刻を優先して表示する --}}
                             <input class="form__input" id="new_clock_in" type="text" name="new_clock_in"
-                                value="{{ $attendanceRecord['clock_in'] }}">
+                            value="{{ old('new_clock_in', $attendanceRecord['clock_in']) }}">
 
                             <p>〜</p>
 
                             {{-- 退勤時刻をnew_clock_outとして送信する --}}
+                            {{-- エラー後は入力した時刻を優先して表示する --}}
                             <input class="form__input" type="text" name="new_clock_out"
-                                value="{{ $attendanceRecord['clock_out'] }}">
+                            value="{{ old('new_clock_out', $attendanceRecord['clock_out']) }}">
 
                         </div>
                     </div>
@@ -129,15 +131,16 @@
 
                                 {{-- 休憩開始時刻を配列形式で送信する --}}
                                 {{-- 例：new_break_in[0]、new_break_in[1] --}}
-                                {{-- 値がない場合は空欄を表示する --}}
+                                {{-- エラー後は入力した値を保持し、初回は保存済みの時刻を表示する --}}
                                 <input class="form__input" type="text" name="new_break_in[{{ $index }}]"
-                                    value="{{ $break['break_in'] ?? '' }}">
+                                value="{{ old('new_break_in.' . $index, $break['break_in'] ?? '') }}">
 
                                 <p>〜</p>
 
                                 {{-- 休憩終了時刻を配列形式で送信する --}}
+                                {{-- エラー後は入力した値を保持する --}}
                                 <input class="form__input" type="text" name="new_break_out[{{ $index }}]"
-                                    value="{{ $break['break_out'] ?? '' }}">
+                                value="{{ old('new_break_out.' . $index, $break['break_out'] ?? '') }}">
 
                             </div>
                         </div>
@@ -167,21 +170,25 @@
 
                     <div class="form__group">
 
-                        {{-- 追加する休憩の番号を表示する --}}
-                        <label class="form__header">{{ $newBreakIndex === 0 ? '休憩' : '休憩' . ($newBreakIndex + 1) }}</label>
+                    {{-- 追加する休憩の番号を表示する --}}
+                    <label class="form__header">{{ $newBreakIndex === 0 ? '休憩' : '休憩' . ($newBreakIndex + 1) }}</label>
 
-                        <div class="form__input-group">
+                    <div class="form__input-group">
 
-                            {{-- 新しい休憩開始時刻の入力欄 --}}
-                            <input class="form__input" type="text" name="new_break_in[{{ $newBreakIndex }}]" value="">
+                    {{-- 新しい休憩開始時刻の入力欄 --}}
+                    {{-- エラー後も入力した時刻を保持する --}}
+                    <input class="form__input" type="text" name="new_break_in[{{ $newBreakIndex }}]"
+                    value="{{ old('new_break_in.' . $newBreakIndex, '') }}">
 
-                            <p>〜</p>
+                    <p>〜</p>
 
-                            {{-- 新しい休憩終了時刻の入力欄 --}}
-                            <input class="form__input" type="text" name="new_break_out[{{ $newBreakIndex }}]" value="">
+                    {{-- 新しい休憩終了時刻の入力欄 --}}
+                    {{-- エラー後も入力した時刻を保持する --}}
+                    <input class="form__input" type="text" name="new_break_out[{{ $newBreakIndex }}]"
+                    value="{{ old('new_break_out.' . $newBreakIndex, '') }}">
 
-                        </div>
                     </div>
+                </div>
 
                     {{-- 追加した休憩のバリデーションエラーを表示する --}}
                     <div class="error-message">
@@ -203,7 +210,8 @@
                         <div class="form__input-group">
 
                             {{-- 修正理由などをcommentとしてControllerに送信する --}}
-                            <textarea class="form__textarea" name="comment" id="comment">{{ $attendanceRecord['comment'] }}</textarea>
+                            {{-- エラー後も入力した備考を保持する --}}
+                            <textarea class="form__textarea" name="comment" id="comment">{{ old('comment', $attendanceRecord['comment']) }}</textarea>
 
                         </div>
                     </div>

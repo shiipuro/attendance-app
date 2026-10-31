@@ -151,20 +151,33 @@ public function update(Request $request, $id): \Illuminate\Http\RedirectResponse
     {
         $attendance = Attendance::findOrFail($id);
 
-        // 入力内容をチェック
-        $validated = $request->validate([
-            'new_clock_in' => ['required', 'date_format:H:i'],
-            'new_clock_out' => [
-                'required',
-                'date_format:H:i',
-                'after:new_clock_in',
-            ],
-            'comment' => ['required', 'string', 'max:1000'],
-            'new_break_in' => ['nullable', 'array'],
-            'new_break_out' => ['nullable', 'array'],
-            'new_break_in.*' => ['nullable', 'date_format:H:i'],
-            'new_break_out.*' => ['nullable', 'date_format:H:i'],
-        ]);
+        // 入力内容をチェックし、エラーがあれば日本語で表示する
+$validated = $request->validate([
+    'new_clock_in' => ['required', 'date_format:H:i'],
+    'new_clock_out' => [
+        'required',
+        'date_format:H:i',
+        'after:new_clock_in',
+    ],
+    'comment' => ['required', 'string', 'max:1000'],
+    'new_break_in' => ['nullable', 'array'],
+    'new_break_out' => ['nullable', 'array'],
+    'new_break_in.*' => ['nullable', 'date_format:H:i'],
+    'new_break_out.*' => ['nullable', 'date_format:H:i'],
+
+    ], [
+    // 出勤時刻が未入力の場合
+    'new_clock_in.required' => '出勤時刻を入力してください。',
+
+    // 退勤時刻が未入力の場合
+    'new_clock_out.required' => '退勤時刻を入力してください。',
+
+    // 退勤時刻が出勤時刻以前の場合
+    'new_clock_out.after' => '退勤時刻は出勤時刻より後にしてください。',
+
+    // 備考欄が未入力の場合
+    'comment.required' => '備考を入力してください。',
+]);
 
         $breakIns = $request->input('new_break_in', []);
         $breakOuts = $request->input('new_break_out', []);

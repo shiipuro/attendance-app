@@ -22,12 +22,28 @@ class CreateNewUser implements CreatesNewUsers
      */
     public function create(array $input): User
     {
-        Validator::make($input, [
-            'name' => ['required'],
-            'email' => ['required','email'],
-            'password' => ['required', 'min:8', 'confirmed'],
-            'password_confirmation' => ['required'],
-        ])->validate();
+        // 会員登録時の入力内容をチェックする
+Validator::make($input, [
+    'name' => ['required'],
+    'email' => ['required', 'email'],
+    'password' => ['required', 'min:8', 'confirmed'],
+    'password_confirmation' => ['required'],
+], [
+    // 名前の入力チェック
+    'name.required' => 'お名前を入力してください',
+
+    // メールアドレスの入力チェック
+    'email.required' => 'メールアドレスを入力してください',
+    'email.email' => 'メールアドレスはメール形式で入力してください',
+
+    // パスワードの入力チェック
+    'password.required' => 'パスワードを入力してください',
+    'password.min' => 'パスワードは8文字以上で入力してください',
+    'password.confirmed' => 'パスワードと一致しません',
+
+    // 確認用パスワードの入力チェック
+    'password_confirmation.required' => '確認用パスワードを入力してください',
+])->validate();
 
         return User::create([
             'name' => $input['name'],

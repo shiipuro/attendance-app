@@ -285,7 +285,7 @@ class AttendanceTest extends TestCase
     $this->actingAs($user);
 
     // 勤怠詳細画面にアクセスする
-    $response = $this->get('/attendance/' . $attendance->id);
+    $response = $this->get('/attendance/detail/' . $attendance->id);
 
     // 正常に画面が表示されることを確認する
     $response->assertStatus(200);
@@ -330,14 +330,14 @@ class AttendanceTest extends TestCase
     ]);
 
     // 勤怠修正申請を送信する
-    $response = $this->post('/attendance/' . $attendance->id, [
+    $response = $this->post('/attendance/detail/' . $attendance->id, [
         'new_clock_in' => '09:30',
         'new_clock_out' => '18:30',
         'comment' => '打刻時間を間違えたため',
     ]);
 
     // 勤怠詳細画面に戻ることを確認する
-    $response->assertRedirect('/attendance/' . $attendance->id);
+    $response->assertRedirect('/attendance/detail/' . $attendance->id);
 
     // 修正申請が承認待ちで保存されたことを確認する
     $this->assertDatabaseHas('attendance_correction_requests', [
@@ -362,21 +362,21 @@ class AttendanceTest extends TestCase
     ]);
 
     // 1回目の修正申請を送信する
-    $this->post('/attendance/' . $attendance->id, [
+    $this->post('/attendance/detail/' . $attendance->id, [
         'new_clock_in' => '09:30',
         'new_clock_out' => '18:30',
         'comment' => '1回目の修正申請',
     ]);
 
     // 2回目の修正申請を送信する
-    $response = $this->post('/attendance/' . $attendance->id, [
+    $response = $this->post('/attendance/detail/' . $attendance->id, [
         'new_clock_in' => '10:00',
         'new_clock_out' => '19:00',
         'comment' => '2回目の修正申請',
     ]);
 
     // 勤怠詳細画面に戻ることを確認する
-    $response->assertRedirect('/attendance/' . $attendance->id);
+    $response->assertRedirect('/attendance/detail/' . $attendance->id);
 
     // 修正申請が1件だけ保存されていることを確認する
     $this->assertDatabaseCount('attendance_correction_requests', 1);
@@ -423,7 +423,7 @@ class AttendanceTest extends TestCase
     ]);
 
     // 自分の修正申請を作成する
-    $this->post('/attendance/' . $attendance->id, [
+    $this->post('/attendance/detail/' . $attendance->id, [
         'new_clock_in' => '09:30',
         'new_clock_out' => '18:30',
         'comment' => '自分の修正申請',
@@ -432,7 +432,7 @@ class AttendanceTest extends TestCase
     // 他のユーザーでログインして修正申請を作成する
     $this->actingAs($otherUser);
 
-    $this->post('/attendance/' . $otherAttendance->id, [
+    $this->post('/attendance/detail/' . $otherAttendance->id, [
         'new_clock_in' => '10:00',
         'new_clock_out' => '19:00',
         'comment' => '他人の修正申請',
@@ -578,7 +578,7 @@ class AttendanceTest extends TestCase
     // 一般ユーザーとして修正申請を送信する
     $this->actingAs($user);
 
-    $this->post('/attendance/' . $attendance->id, [
+    $this->post('/attendance/detail/' . $attendance->id, [
         'new_clock_in' => '09:30',
         'new_clock_out' => '18:30',
         'comment' => '打刻時間を修正したいため',
@@ -624,7 +624,7 @@ class AttendanceTest extends TestCase
     // 一般ユーザーとして修正申請を送信する
     $this->actingAs($user);
 
-    $this->post('/attendance/' . $attendance->id, [
+    $this->post('/attendance/detail/' . $attendance->id, [
         'new_clock_in' => '09:30',
         'new_clock_out' => '18:30',
         'comment' => '打刻時間を修正したいため',
@@ -682,7 +682,7 @@ class AttendanceTest extends TestCase
     // 一般ユーザーとして修正申請する
     $this->actingAs($user);
 
-    $this->post('/attendance/' . $attendance->id, [
+    $this->post('/attendance/detail/' . $attendance->id, [
         'new_clock_in' => '09:30',
         'new_clock_out' => '18:30',
         'comment' => '打刻時間の修正',

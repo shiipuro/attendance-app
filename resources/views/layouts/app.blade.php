@@ -45,12 +45,12 @@
     <header class="header">
         <div class="header__inner">
 
-            {{-- ロゴをクリックするとトップページへ移動する --}}
-            <a class="header__logo" href="/">
+            {{-- ロゴをクリックするとスタッフの打刻画面へ移動する --}}
+            <a class="header__logo" href="/attendance">
 
                 {{-- public/images/logo.svgを表示する --}}
                 {{-- asset()はpublicフォルダ内のファイルURLを生成する --}}
-                <img class="header__logo--img" src="{{ asset('images/logo.svg') }}" alt="logo">
+                <span style="color: white; font-size: 24px; font-weight: bold;">COACHTECH</span>
 
             </a>
 
@@ -88,8 +88,8 @@
                     {{-- 自分が提出した勤怠修正申請の一覧へ移動する --}}
                     <a class="inner__group--item" href="/stamp_correction_request/list">申請</a>
 
-                    {{-- 勤怠レポート画面へのリンク --}}
-                    <a class="inner__group--item" href="/reports">レポート</a>
+                    {{-- 仕様書PG14の勤怠レポート画面へ移動する --}}
+                    <a class="inner__group--item" href="/attendance/report">レポート</a>
 
                     {{-- ボタンを押すとログアウト用フォームをPOST送信する --}}
                     <button class="inner__group--item logout-button">

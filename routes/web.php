@@ -62,19 +62,20 @@ Route::post('/attendance', [AttendanceController::class, 'store'])
 Route::get('/attendance/list', [UserAttendanceController::class, 'index'])
     ->middleware(['auth', 'verified']);
 
-// 指定された勤怠IDの詳細画面を表示する
+// ログイン・メール認証済みの一般ユーザーに勤怠レポートを表示する
+// 仕様書PG14に合わせて /attendance/report を使用する
+Route::get('/attendance/report', [ReportController::class, 'index'])
+    ->middleware(['auth', 'verified'])
+    ->name('reports.index');
+
+// 仕様書PG05に合わせて、指定された勤怠IDの詳細画面を表示する
 // {id}には対象の勤怠データのIDが入る
-Route::get('/attendance/{id}', [UserAttendanceController::class, 'show'])
+Route::get('/attendance/detail/{id}', [UserAttendanceController::class, 'show'])
     ->middleware(['auth', 'verified']);
 
 // 勤怠詳細画面から送信された修正申請を保存する
-Route::post('/attendance/{id}', [UserAttendanceController::class, 'store'])
+Route::post('/attendance/detail/{id}', [UserAttendanceController::class, 'store'])
     ->middleware(['auth', 'verified']);
-
-// ログイン・メール認証済みの一般ユーザーに勤怠レポートを表示する
-Route::get('/reports', [ReportController::class, 'index'])
-    ->middleware(['auth', 'verified'])
-    ->name('reports.index');
 
 
 // ================================

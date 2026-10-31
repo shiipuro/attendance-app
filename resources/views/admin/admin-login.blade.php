@@ -41,12 +41,11 @@
     <header class="header">
         <div class="header__inner">
 
-            {{-- ロゴをクリックするとトップページへ移動する --}}
-            <a class="header__logo" href="/">
+            {{-- ロゴをクリックすると管理者の勤怠一覧へ移動する --}}
+            <a class="header__logo" href="/admin/attendance/list">
 
-                {{-- public/images/logo.svgの画像を表示する --}}
-                {{-- asset()はpublicフォルダ内のファイルURLを生成する --}}
-                <img class="header__logo--img" src="{{ asset('images/logo.svg') }}" alt="logo">
+                {{-- COACHTECHのロゴを白い文字で表示する --}}
+<span style="color: white; font-size: 24px; font-weight: bold;">COACHTECH</span>
 
             </a>
         </div>

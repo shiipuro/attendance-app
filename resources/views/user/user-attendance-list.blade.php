@@ -114,8 +114,8 @@
                 {{-- 打刻データがない日はリンクを表示しない --}}
                 @if (!empty($attendanceRecord['id']))
 
-                {{-- 勤怠IDをURLに付けて詳細画面へ移動する --}}
-                <a class="table__item--detail-link" href="{{ url('/attendance/' . $attendanceRecord['id']) }}">詳細</a>
+                {{-- 仕様書PG05に合わせて、勤怠IDを付けて詳細画面へ移動する --}}
+                <a class="table__item--detail-link" href="{{ url('/attendance/detail/' . $attendanceRecord['id']) }}">詳細</a>
 
                 @endif
             </td>
