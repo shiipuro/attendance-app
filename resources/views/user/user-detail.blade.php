@@ -64,20 +64,23 @@
                     <div class="form__group">
                         <label class="form__header" for="new_clock_in">出勤・退勤</label>
                         <div class="form__input-group">
-                            <input class="form__input" id="new_clock_in" type="text" name="new_clock_in" value="{{ $data['clock_in'] }}">
+                            <input class="form__input" id="new_clock_in" type="text" name="new_clock_in" value="{{ old('new_clock_in', $data['clock_in']) }}">
                             <p>〜</p>
-                            <input class="form__input" type="text" name="new_clock_out" value="{{ $data['clock_out'] }}">
+                            <input class="form__input" type="text" name="new_clock_out" value="{{ old('new_clock_out', $data['clock_out']) }}">
                         </div>
                     </div>
 
-                    {{-- 出勤・退勤時刻のバリデーションエラーを表示する --}}
+                    {{-- 出勤・退勤時刻のエラーを重複せず表示する --}}
                     <div class="error-message">
-                        <div></div>
-                        <div class="error-message__item">
-                            @error('new_clock_in') {{ $message }} @enderror
-                            @error('new_clock_out') {{ $message }} @enderror
-                        </div>
-                    </div>
+            <div></div>
+                    <div class="error-message__item">
+                    @if ($errors->has('new_clock_in'))
+                    {{ $errors->first('new_clock_in') }}
+                    @elseif ($errors->has('new_clock_out'))
+                    {{ $errors->first('new_clock_out') }}
+                    @endif
+                </div>
+            </div>
 
                     {{-- ========================================= --}}
                     {{-- ④ 登録済みの休憩時間を表示・修正する --}}
@@ -97,11 +100,11 @@
 
                                 {{-- 配列形式で休憩開始時刻を送信する --}}
                                 {{-- 例：new_break_in[0]、new_break_in[1] --}}
-                                <input class="form__input" type="text" name="new_break_in[{{ $index }}]" value="{{ $break['break_in'] }}">
+                                <input class="form__input" type="text" name="new_break_in[{{ $index }}]" value="{{ old('new_break_in.' . $index, $break['break_in']) }}">
                                 <p>〜</p>
 
                                 {{-- 配列形式で休憩終了時刻を送信する --}}
-                                <input class="form__input" type="text" name="new_break_out[{{ $index }}]" value="{{ $break['break_out'] }}">
+                                <input class="form__input" type="text" name="new_break_out[{{ $index }}]" value="{{ old('new_break_out.' . $index, $break['break_out']) }}">
 
                             </div>
                         </div>
@@ -134,11 +137,11 @@
                         <div class="form__input-group">
 
                             {{-- 新しい休憩開始時刻の入力欄 --}}
-                            <input class="form__input" type="text" name="new_break_in[{{ $newBreakIndex }}]" value="">
+                            <input class="form__input" type="text" name="new_break_in[{{ $newBreakIndex }}]" value="{{ old('new_break_in.' . $newBreakIndex, '') }}">
                             <p>〜</p>
 
                             {{-- 新しい休憩終了時刻の入力欄 --}}
-                            <input class="form__input" type="text" name="new_break_out[{{ $newBreakIndex }}]" value="">
+                            <input class="form__input" type="text" name="new_break_out[{{ $newBreakIndex }}]" value="{{ old('new_break_out.' . $newBreakIndex, '') }}">
 
                         </div>
                     </div>
@@ -161,7 +164,7 @@
                         <div class="form__input-group">
 
                             {{-- 修正理由をcommentとしてControllerに送信する --}}
-                            <input class="form__textarea" id="comment" name="comment" value="{{ $data['comment'] }}">
+                            <input class="form__textarea" id="comment" name="comment" value="{{ old('comment', $data['comment']) }}">
 
                         </div>
                     </div>
@@ -256,7 +259,7 @@
 
                 {{-- 承認待ちの場合は修正ボタンを表示しない --}}
                 <div class="form__button">
-                    <p class="readonly-message">承認待ちのため修正できません</p>
+                    <p class="readonly-message">承認待ちのため修正はできません。</p>
                 </div>
 
             @endif

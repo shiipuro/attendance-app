@@ -40,6 +40,11 @@ class AttendanceCorrectionFormRequest extends FormRequest
             'new_clock_out.date_format' => '出勤時間もしくは退勤時間が不適切な値です',
             'new_clock_out.after' => '出勤時間もしくは退勤時間が不適切な値です',
             'comment.required' => '備考を記入してください',
+            // 休憩開始時刻の入力形式が不正な場合
+            'new_break_in.*.date_format' => '休憩時間が不適切な値です',
+
+            // 休憩終了時刻の入力形式が不正な場合
+            'new_break_out.*.date_format' => '休憩時間もしくは退勤時間が不適切な値です',
         ];
     }
 }
