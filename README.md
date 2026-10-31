@@ -61,6 +61,13 @@ cp .env.example .env
 ./vendor/bin/sail artisan migrate
 ```
 
+### 7. フロントエンドの準備
+
+```bash
+./vendor/bin/sail npm install
+./vendor/bin/sail npm run build
+```
+
 ## テスト
 
 自動テストには、通常のアプリ用とは別の `testing` データベースを使用します。
