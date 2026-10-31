@@ -24,7 +24,7 @@ Laravelを使用して開発した勤怠管理アプリです。
 ### 1. リポジトリの取得
 
 ```bash
-git clone <リポジトリURL>
+git clone https://github.com/shiipuro/attendance-app.git
 cd attendance-app
 ```
 
@@ -80,3 +80,25 @@ cp .env.example .env
 ```bash
 ./vendor/bin/sail artisan db:seed
 ```
+
+### 一般ユーザー
+
+ログインURL：`/login`
+
+| メールアドレス    | パスワード  |
+| ----------------- | ----------- |
+| user1@example.com | password123 |
+| user2@example.com | password123 |
+| user3@example.com | password123 |
+
+### 管理者
+
+ログインURL：`/admin/login`
+
+| メールアドレス    | パスワード  |
+| ----------------- | ----------- |
+| admin@example.com | password123 |
+
+※ 上記は開発・動作確認用のアカウントです。
+
+※ `php artisan db:seed` 実行時に、テスト用アカウント・勤怠データ・修正申請データが登録されます。
